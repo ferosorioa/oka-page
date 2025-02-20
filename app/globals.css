@@ -1,0 +1,17 @@
+@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.handwritten {
+  font-family: "Caveat", cursive;
+}
+
+.bg-snake-plant {
+  background-image: url("https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Pin%20page%20image.jpg-3l0zMpnzq3Kp6SZqgcLrsF1qUGFN1m.jpeg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
