@@ -1,4 +1,5 @@
 "use client"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
@@ -7,29 +8,69 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ShoppingCart } from "lucide-react"
+import type { DateRange } from "react-day-picker"
 import {
-  LineChart,
   Line,
+  LineChart,
+  BarChart,
+  Bar,
+  CartesianGrid,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
 } from "@/components/ui/chart"
+import { DateRangePicker } from "@/components/ui/date-range-picker"
 
-// Sample data for the chart
-const data = [
-  { name: "Ene", Bolsas: 4000, Otros: 2400 },
-  { name: "Feb", Bolsas: 3000, Otros: 1398 },
-  { name: "Mar", Bolsas: 2000, Otros: 9800 },
-  { name: "Abr", Bolsas: 2780, Otros: 3908 },
-  { name: "May", Bolsas: 1890, Otros: 4800 },
-  { name: "Jun", Bolsas: 2390, Otros: 3800 },
-  { name: "Jul", Bolsas: 3490, Otros: 4300 },
+// Sample data with full dates
+const fullData = [
+  { date: new Date(2024, 0, 1), name: "Ene", Bolsas: 4000, Otros: 2400, Ingresos: 5000, Gastos: 3000 },
+  { date: new Date(2024, 1, 1), name: "Feb", Bolsas: 3000, Otros: 1398, Ingresos: 4500, Gastos: 3200 },
+  { date: new Date(2024, 2, 1), name: "Mar", Bolsas: 2000, Otros: 9800, Ingresos: 6000, Gastos: 3500 },
+  { date: new Date(2024, 3, 1), name: "Abr", Bolsas: 2780, Otros: 3908, Ingresos: 5500, Gastos: 3800 },
+  { date: new Date(2024, 4, 1), name: "May", Bolsas: 1890, Otros: 4800, Ingresos: 7000, Gastos: 4000 },
+  { date: new Date(2024, 5, 1), name: "Jun", Bolsas: 2390, Otros: 3800, Ingresos: 6500, Gastos: 3700 },
+  { date: new Date(2024, 6, 1), name: "Jul", Bolsas: 3490, Otros: 4300, Ingresos: 7500, Gastos: 4200 },
 ]
 
-export default function DashboardPage() {
+export default function EnhancedDashboardPage() {
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: new Date(2024, 0, 1),
+    to: new Date(),
+  })
+  const [filteredData, setFilteredData] = useState(fullData)
+  const [kpis, setKpis] = useState({
+    ventasTotales: 45670,
+    margenBeneficio: 32,
+    clientesNuevos: 24,
+    tasaConversion: 3.8,
+  })
+
+  // Filter data based on date range
+  useEffect(() => {
+    if (dateRange?.from && dateRange?.to) {
+      const filtered = fullData.filter((item) => {
+        const from = dateRange.from!
+        const to = dateRange.to!
+        return item.date >= from && item.date <= to
+      })
+      setFilteredData(filtered)
+
+      // Update KPIs based on filtered data
+      const totalVentas = filtered.reduce((sum, item) => sum + item.Bolsas + item.Otros, 0)
+      const totalIngresos = filtered.reduce((sum, item) => sum + item.Ingresos, 0)
+      const totalGastos = filtered.reduce((sum, item) => sum + item.Gastos, 0)
+
+      setKpis({
+        ventasTotales: totalVentas,
+        margenBeneficio: Math.round(((totalIngresos - totalGastos) / totalIngresos) * 100),
+        clientesNuevos: Math.round(totalVentas / 1000), // Simplified calculation for demo
+        tasaConversion: Number(((totalVentas / 100000) * 100).toFixed(1)), // Simplified calculation for demo
+      })
+    }
+  }, [dateRange])
+
   return (
     <div className="min-h-screen bg-[#fcf5f0]">
       <header className="bg-[#fcf5f0] shadow-sm">
@@ -68,8 +109,11 @@ export default function DashboardPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="bg-[#344b41] p-4 rounded-lg mb-8">
-          <h2 className="text-3xl handwritten text-white">Semaforo del día</h2>
+        <div className="flex justify-between items-center mb-8">
+          <div className="bg-[#344b41] p-4 rounded-lg">
+            <h2 className="text-3xl handwritten text-white">Semaforo del día</h2>
+          </div>
+          <DateRangePicker onChange={setDateRange} />
         </div>
 
         <div className="grid md:grid-cols-4 gap-8 mb-8">
@@ -82,7 +126,7 @@ export default function DashboardPage() {
             <h3 className="text-xl font-semibold mb-4 text-[#334a40]">Ventas por producto</h3>
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data}>
+                <LineChart data={filteredData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />
@@ -93,6 +137,42 @@ export default function DashboardPage() {
                 </LineChart>
               </ResponsiveContainer>
             </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg p-6 shadow-md mb-8">
+          <h3 className="text-xl font-semibold mb-4 text-[#334a40]">Ingresos y Gastos por Mes</h3>
+          <div className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={filteredData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="Ingresos" fill="#334a40" />
+                <Bar dataKey="Gastos" fill="#9db1aa" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-4 gap-8 mb-8">
+          <div className="bg-white rounded-lg p-6 shadow-md text-center">
+            <h3 className="text-lg mb-2 text-[#334a40]">Ventas Totales</h3>
+            <span className="text-4xl font-bold text-[#334a40]">${kpis.ventasTotales.toLocaleString()}</span>
+          </div>
+          <div className="bg-white rounded-lg p-6 shadow-md text-center">
+            <h3 className="text-lg mb-2 text-[#334a40]">Margen de Beneficio</h3>
+            <span className="text-4xl font-bold text-[#334a40]">{kpis.margenBeneficio}%</span>
+          </div>
+          <div className="bg-white rounded-lg p-6 shadow-md text-center">
+            <h3 className="text-lg mb-2 text-[#334a40]">Clientes Nuevos</h3>
+            <span className="text-4xl font-bold text-[#334a40]">{kpis.clientesNuevos}</span>
+          </div>
+          <div className="bg-white rounded-lg p-6 shadow-md text-center">
+            <h3 className="text-lg mb-2 text-[#334a40]">Tasa de Conversión</h3>
+            <span className="text-4xl font-bold text-[#334a40]">{kpis.tasaConversion}%</span>
           </div>
         </div>
 
