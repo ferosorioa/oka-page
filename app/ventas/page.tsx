@@ -12,7 +12,7 @@ import { ShoppingCart, Plus, Upload } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import Header from "@/components/ui/header"
 
 interface Product {
   id: string
@@ -171,150 +171,11 @@ export default function SalesPortal() {
       ? localProducts
       : localProducts.filter((product) => product.category === selectedCategory)
 
-  const handleAddProduct = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const formData = new FormData(event.currentTarget)
 
-    const newProduct: Product = {
-      id: Math.random().toString(36).substring(7), // Simple random ID generation
-      name: formData.get("name") as string,
-      price: Number(formData.get("price")),
-      category: formData.get("category") as string,
-      image: "/placeholder.svg?height=400&width=400", // Default placeholder image
-    }
-
-    setLocalProducts((prev) => [...prev, newProduct])
-    toast({
-      description: "Producto agregado exitosamente",
-    })
-  }
-
-  const handleQuantityChange = (productId: string, delta: number) => {
-    setQuantities((prev) => ({
-      ...prev,
-      [productId]: Math.max(0, (prev[productId] || 0) + delta),
-    }))
-  }
-
-  const addToCart = (product: Product) => {
-    const quantity = quantities[product.id] || 0
-    if (quantity > 0) {
-      setCartItems((prev) => {
-        const existingItem = prev.find((item) => item.id === product.id)
-        if (existingItem) {
-          return prev.map((item) => (item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item))
-        }
-        return [...prev, { ...product, quantity }]
-      })
-      setQuantities((prev) => ({ ...prev, [product.id]: 0 }))
-      toast({
-        description: `${product.name} agregado al carrito`,
-      })
-    }
-  }
-
-  const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0)
 
   return (
     <div className="min-h-screen bg-[#fcf5f0]">
-      <header className="bg-[#fcf5f0] shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-2">
-              <Image
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-02-17%20at%2011.39.25%E2%80%AFa.m.-T61UgYkPwWHNlb2RxG93kd7YsQLgsG.png"
-                alt="OKA Logo"
-                width={40}
-                height={40}
-                className="h-10 w-auto"
-              />
-              <span className="text-2xl font-semibold text-[#334a40]">OKA</span>
-            </div>
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="/" className="text-[#334a40] hover:text-[#688078] transition-colors">
-                Dashboard
-              </Link>
-              <Link href="/ventas" className="text-[#334a40] hover:text-[#688078] transition-colors">
-                Portal de Ventas
-              </Link>
-              <Link href="/insights" className="text-[#334a40] hover:text-[#688078] transition-colors">
-                Insights
-              </Link>
-            </nav>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Agregar Producto
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Agregar Nuevo Producto</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleAddProduct} className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="name" className="text-right">
-                      Nombre
-                    </Label>
-                    <Input id="name" name="name" placeholder="Nombre del producto" className="col-span-3" required />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="price" className="text-right">
-                      Precio
-                    </Label>
-                    <Input id="price" name="price" type="number" placeholder="0.00" className="col-span-3" required />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="category" className="text-right">
-                      Categoría
-                    </Label>
-                    <Select name="category" required>
-                      <SelectTrigger className="col-span-3">
-                        <SelectValue placeholder="Seleccionar categoría" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories.map((category) => (
-                          <SelectItem key={category} value={category}>
-                            {category}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="image" className="text-right">
-                      Imagen
-                    </Label>
-                    <div className="col-span-3">
-                      <div className="flex items-center justify-center w-full">
-                        <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-50">
-                          <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                            <Upload className="w-8 h-8 mb-2 text-gray-500" />
-                            <p className="text-sm text-gray-500">Subir imagen del producto</p>
-                          </div>
-                          <input id="image" type="file" accept="image/*" className="hidden" />
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                  <Button type="submit" className="ml-auto">
-                    Agregar Producto
-                  </Button>
-                </form>
-              </DialogContent>
-            </Dialog>
-            <div className="flex items-center gap-2">
-              <ShoppingCart className="h-6 w-6 text-[#334a40]" />
-              <span className="text-lg font-semibold text-[#334a40]">{cartItemCount}</span>
-            </div>
-          </div>
-        </div>
-      </header>
-
+      <Header />
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex flex-wrap justify-center gap-4 mb-8">
           <Button
