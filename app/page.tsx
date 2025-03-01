@@ -496,328 +496,315 @@ export default function EnhancedDashboardPage() {
   return (
     
     <div className="min-h-screen bg-[#fcf5f0]">
-      <Header />
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div className="bg-[#344b41] p-4 rounded-lg">
-            <h2 className="text-3xl handwritten text-white">
-              Semaforo del día
-            </h2>
-          </div>
-          <DateRangePicker onChange={setDateRange} />
+    <Header />
+    <main className="max-w-7xl mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-8">
+        <div className="bg-[#344b41] p-4 rounded-lg">
+          <h2 className="text-3xl handwritten text-white">Semaforo del día</h2>
         </div>
+        <DateRangePicker onChange={setDateRange} />
+      </div>
 
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#334a40] border-r-transparent"></div>
-            <p className="mt-4 text-[#334a40]">Cargando datos...</p>
+      {loading ? (
+        <div className="text-center py-12">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#334a40] border-r-transparent"></div>
+          <p className="mt-4 text-[#334a40]">Cargando datos...</p>
+        </div>
+      ) : (
+        <>
+          <div className="mb-8">
+            <div className="bg-white rounded-lg p-6 shadow-md">
+              <h3 className="text-xl font-semibold mb-4 text-[#334a40]">Ventas por producto</h3>
+              <div className="h-[400px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip formatter={(value) => formatCurrency(value as number)} />
+                    <Legend />
+                    <Line type="monotone" dataKey="Bolsas" stroke="#334a40" />
+                    <Line type="monotone" dataKey="Otros" stroke="#9db1aa" />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
-        ) : (
-          <>
-            <div className="grid md:grid-cols-4 gap-8 mb-8">
-              <div className="bg-[#344b41] rounded-lg p-8 text-center text-white">
-                <h3 className="text-lg mb-2">Días desde último pedido</h3>
-                <span className="text-8xl font-bold">
-                  {kpis.diasUltimoPedido.toString().padStart(2, "0")}
-                </span>
-              </div>
 
-              <div className="md:col-span-3 bg-white rounded-lg p-6 shadow-md">
-                <h3 className="text-xl font-semibold mb-4 text-[#334a40]">
-                  Ventas por producto
-                </h3>
-                <div className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={chartData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip
-                        formatter={(value) => formatCurrency(value as number)}
-                      />
-                      <Legend />
-                      <Line type="monotone" dataKey="Bolsas" stroke="#334a40" />
-                      <Line type="monotone" dataKey="Otros" stroke="#9db1aa" />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
+          <div className="grid md:grid-cols-4 gap-8 mb-8">
+            <div className="bg-white rounded-lg p-6 shadow-md text-center">
+              <h3 className="text-lg mb-2 text-[#334a40]">Ventas Totales</h3>
+              <span className="text-4xl font-bold text-[#334a40]">
+                {formatCurrency(kpis.ventasTotales)}
+              </span>
             </div>
-
-            <div className="grid md:grid-cols-4 gap-8 mb-8">
-              <div className="bg-white rounded-lg p-6 shadow-md text-center">
-                <h3 className="text-lg mb-2 text-[#334a40]">Ventas Totales</h3>
-                <span className="text-4xl font-bold text-[#334a40]">
-                  {formatCurrency(kpis.ventasTotales)}
-                </span>
-              </div>
-              <div className="bg-white rounded-lg p-6 shadow-md text-center">
-                <h3 className="text-lg mb-2 text-[#334a40]">
-                  Margen de Beneficio
-                </h3>
-                <span className="text-4xl font-bold text-[#334a40]">
-                  {kpis.margenBeneficio}%
-                </span>
-              </div>
-              <div className="bg-white rounded-lg p-6 shadow-md text-center">
-                <h3 className="text-lg mb-2 text-[#334a40]">Clientes Únicos</h3>
-                <span className="text-4xl font-bold text-[#334a40]">
-                  {kpis.clientesNuevos}
-                </span>
-              </div>
-              <div className="bg-white rounded-lg p-6 shadow-md text-center">
-                <h3 className="text-lg mb-2 text-[#334a40]">
-                  Tasa de Conversión
-                </h3>
-                <span className="text-4xl font-bold text-[#334a40]">
-                  {kpis.tasaConversion}%
-                </span>
-              </div>
+            <div className="bg-white rounded-lg p-6 shadow-md text-center">
+              <h3 className="text-lg mb-2 text-[#334a40]">Margen de Beneficio</h3>
+              <span className="text-4xl font-bold text-[#334a40]">
+                {kpis.margenBeneficio}%
+              </span>
             </div>
+            <div className="bg-white rounded-lg p-6 shadow-md text-center">
+              <h3 className="text-lg mb-2 text-[#334a40]">Clientes Únicos</h3>
+              <span className="text-4xl font-bold text-[#334a40]">
+                {kpis.clientesNuevos}
+              </span>
+            </div>
+            <div className="bg-white rounded-lg p-6 shadow-md text-center">
+              <h3 className="text-lg mb-2 text-[#334a40]">Tasa de Conversión</h3>
+              <span className="text-4xl font-bold text-[#334a40]">
+                {kpis.tasaConversion}%
+              </span>
+            </div>
+          </div>
 
-            <Tabs defaultValue="overview" className="mb-8">
-              <TabsList className="mb-4">
-                <TabsTrigger
-                  value="overview"
-                  className="flex items-center gap-2"
-                >
-                  <BarChart3 className="h-4 w-4" />
-                  Visión General
-                </TabsTrigger>
-                <TabsTrigger
-                  value="products"
-                  className="flex items-center gap-2"
-                >
-                  <PieChart className="h-4 w-4" />
-                  Productos y Canales
-                </TabsTrigger>
-                <TabsTrigger
-                  value="expenses"
-                  className="flex items-center gap-2"
-                >
-                  <TrendingUp className="h-4 w-4" />
-                  Gastos
-                </TabsTrigger>
-              </TabsList>
+          <Tabs defaultValue="overview" className="mb-8">
+            <TabsList className="mb-4">
+              <TabsTrigger value="overview" className="flex items-center gap-2">
+                <BarChart3 className="h-4 w-4" />
+                Visión General
+              </TabsTrigger>
+              <TabsTrigger value="products" className="flex items-center gap-2">
+                <PieChart className="h-4 w-4" />
+                Productos y Canales
+              </TabsTrigger>
+              <TabsTrigger value="expenses" className="flex items-center gap-2">
+                <TrendingUp className="h-4 w-4" />
+                Gastos
+              </TabsTrigger>
+            </TabsList>
 
-              <TabsContent value="overview">
-                <div className="grid md:grid-cols-2 gap-8 mb-8">
-                  <div className="bg-white rounded-lg p-6 shadow-md">
-                    <h3 className="text-xl font-semibold mb-4 text-[#334a40]">
-                      Ingresos y Gastos por Mes
-                    </h3>
-                    <div className="h-[350px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={chartData}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="name" />
-                          <YAxis />
-                          <Tooltip
-                            formatter={(value) =>
-                              formatCurrency(value as number)
-                            }
-                          />
-                          <Legend />
-                          <Bar dataKey="Ingresos" fill="#334a40" />
-                          <Bar dataKey="Gastos" fill="#9db1aa" />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-
-                  <div className="bg-white rounded-lg p-6 shadow-md">
-                    <h3 className="text-xl font-semibold mb-4 text-[#334a40]">
-                      Transacciones Recientes
-                    </h3>
-                    <div className="h-[350px] overflow-auto">
-                      <table className="w-full">
-                        <thead className="bg-gray-50 text-[#334a40]">
-                          <tr>
-                            <th className="px-4 py-2 text-left">Fecha</th>
-                            <th className="px-4 py-2 text-left">Tipo</th>
-                            <th className="px-4 py-2 text-left">Detalle</th>
-                            <th className="px-4 py-2 text-right">Monto</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {recentTransactions.map((transaction: any) => (
-                            <tr key={transaction.id} className="border-b">
-                              <td className="px-4 py-3">
-                                {formatDate(transaction.fecha)}
-                              </td>
-                              <td className="px-4 py-3">
-                                <span
-                                  className={`inline-block px-2 py-1 rounded-full text-xs ${
-                                    transaction.type === "ingreso"
-                                      ? "bg-green-100 text-green-800"
-                                      : "bg-red-100 text-red-800"
-                                  }`}
-                                >
-                                  {transaction.type === "ingreso"
-                                    ? "Ingreso"
-                                    : "Egreso"}
-                                </span>
-                              </td>
-                              <td className="px-4 py-3">
-                                {transaction.type === "ingreso"
-                                  ? `${transaction.producto} - ${transaction.donde}`
-                                  : `${transaction.concepto} - ${transaction.proveedor}`}
-                              </td>
-                              <td className="px-4 py-3 text-right font-medium">
-                                <span
-                                  className={
-                                    transaction.type === "ingreso"
-                                      ? "text-green-600"
-                                      : "text-red-600"
-                                  }
-                                >
-                                  {transaction.type === "ingreso"
-                                    ? formatCurrency(transaction.ingreso)
-                                    : formatCurrency(transaction.monto)}
-                                </span>
-                              </td>
-                            </tr>
-                          ))}
-                          {recentTransactions.length === 0 && (
-                            <tr>
-                              <td
-                                colSpan={4}
-                                className="px-4 py-3 text-center text-gray-500"
-                              >
-                                No hay transacciones disponibles
-                              </td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="products">
-                <div className="grid md:grid-cols-2 gap-8 mb-8">
-                  <div className="bg-white rounded-lg p-6 shadow-md">
-                    <h3 className="text-xl font-semibold mb-4 text-[#334a40]">
-                      Ventas por Producto
-                    </h3>
-                    <div className="h-[350px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <RechartsPieChart>
-                          <Pie
-                            data={productData}
-                            cx="50%"
-                            cy="50%"
-                            labelLine={false}
-                            outerRadius={120}
-                            fill="#8884d8"
-                            dataKey="value"
-                            label={({ name, percentage }) =>
-                              `${name}: ${percentage}%`
-                            }
-                          >
-                            {productData.map((entry, index) => (
-                              <Cell
-                                key={`cell-${index}`}
-                                fill={COLORS[index % COLORS.length]}
-                              />
-                            ))}
-                          </Pie>
-                          <Tooltip
-                            formatter={(value) =>
-                              formatCurrency(value as number)
-                            }
-                          />
-                          <Legend />
-                        </RechartsPieChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-
-                  <div className="bg-white rounded-lg p-6 shadow-md">
-                    <h3 className="text-xl font-semibold mb-4 text-[#334a40]">
-                      Ventas por Canal
-                    </h3>
-                    <div className="h-[350px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <RechartsPieChart>
-                          <Pie
-                            data={channelData}
-                            cx="50%"
-                            cy="50%"
-                            labelLine={false}
-                            outerRadius={120}
-                            fill="#8884d8"
-                            dataKey="value"
-                            label={({ name, percentage }) =>
-                              `${name}: ${percentage}%`
-                            }
-                          >
-                            {channelData.map((entry, index) => (
-                              <Cell
-                                key={`cell-${index}`}
-                                fill={COLORS[index % COLORS.length]}
-                              />
-                            ))}
-                          </Pie>
-                          <Tooltip
-                            formatter={(value) =>
-                              formatCurrency(value as number)
-                            }
-                          />
-                          <Legend />
-                        </RechartsPieChart>
-                      </ResponsiveContainer>
-                    </div>
+            <TabsContent value="overview">
+              <div className="grid md:grid-cols-2 gap-8 mb-8">
+                <div className="bg-white rounded-lg p-6 shadow-md">
+                  <h3 className="text-xl font-semibold mb-4 text-[#334a40]">
+                    Ingresos y Gastos por Mes
+                  </h3>
+                  <div className="h-[350px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={chartData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip formatter={(value) => formatCurrency(value as number)} />
+                        <Legend />
+                        <Bar dataKey="Ingresos" fill="#334a40" />
+                        <Bar dataKey="Gastos" fill="#9db1aa" />
+                      </BarChart>
+                    </ResponsiveContainer>
                   </div>
                 </div>
 
                 <div className="bg-white rounded-lg p-6 shadow-md">
                   <h3 className="text-xl font-semibold mb-4 text-[#334a40]">
-                    Detalle de Productos
+                    Transacciones Recientes
                   </h3>
-                  <div className="h-[300px] overflow-auto">
+                  <div className="h-[350px] overflow-auto">
                     <table className="w-full">
                       <thead className="bg-gray-50 text-[#334a40]">
                         <tr>
-                          <th className="px-4 py-2 text-left">Producto</th>
-                          <th className="px-4 py-2 text-left">
-                            Canal Principal
-                          </th>
-                          <th className="px-4 py-2 text-right">
-                            Ventas Totales
-                          </th>
+                          <th className="px-4 py-2 text-left">Fecha</th>
+                          <th className="px-4 py-2 text-left">Tipo</th>
+                          <th className="px-4 py-2 text-left">Detalle</th>
+                          <th className="px-4 py-2 text-right">Monto</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {recentTransactions.map((transaction: any) => (
+                          <tr key={transaction.id} className="border-b">
+                            <td className="px-4 py-3">{formatDate(transaction.fecha)}</td>
+                            <td className="px-4 py-3">
+                              <span
+                                className={`inline-block px-2 py-1 rounded-full text-xs ${
+                                  transaction.type === "ingreso" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                                }`}
+                              >
+                                {transaction.type === "ingreso" ? "Ingreso" : "Egreso"}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3">
+                              {transaction.type === "ingreso"
+                                ? `${transaction.producto} - ${transaction.donde}`
+                                : `${transaction.concepto} - ${transaction.proveedor}`}
+                            </td>
+                            <td className="px-4 py-3 text-right font-medium">
+                              <span className={transaction.type === "ingreso" ? "text-green-600" : "text-red-600"}>
+                                {transaction.type === "ingreso"
+                                  ? formatCurrency(transaction.ingreso)
+                                  : formatCurrency(transaction.monto)}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                        {recentTransactions.length === 0 && (
+                          <tr>
+                            <td colSpan={4} className="px-4 py-3 text-center text-gray-500">
+                              No hay transacciones disponibles
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="products">
+              <div className="grid md:grid-cols-2 gap-8 mb-8">
+                <div className="bg-white rounded-lg p-6 shadow-md">
+                  <h3 className="text-xl font-semibold mb-4 text-[#334a40]">Ventas por Producto</h3>
+                  <div className="h-[350px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RechartsPieChart>
+                        <Pie
+                          data={productData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          outerRadius={120}
+                          fill="#8884d8"
+                          dataKey="value"
+                          label={({ name, percentage }) => `${name}: ${percentage}%`}
+                        >
+                          {productData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip formatter={(value) => formatCurrency(value as number)} />
+                        <Legend />
+                      </RechartsPieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-lg p-6 shadow-md">
+                  <h3 className="text-xl font-semibold mb-4 text-[#334a40]">Ventas por Canal</h3>
+                  <div className="h-[350px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RechartsPieChart>
+                        <Pie
+                          data={channelData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          outerRadius={120}
+                          fill="#8884d8"
+                          dataKey="value"
+                          label={({ name, percentage }) => `${name}: ${percentage}%`}
+                        >
+                          {channelData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip formatter={(value) => formatCurrency(value as number)} />
+                        <Legend />
+                      </RechartsPieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg p-6 shadow-md">
+                <h3 className="text-xl font-semibold mb-4 text-[#334a40]">Detalle de Productos</h3>
+                <div className="h-[300px] overflow-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50 text-[#334a40]">
+                      <tr>
+                        <th className="px-4 py-2 text-left">Producto</th>
+                        <th className="px-4 py-2 text-left">Canal Principal</th>
+                        <th className="px-4 py-2 text-right">Ventas Totales</th>
+                        <th className="px-4 py-2 text-right">% del Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {productData.map((product) => {
+                        const mainChannel = ingresos
+                          .filter((i) => i.producto === product.name)
+                          .reduce((acc, curr) => {
+                            acc[curr.canal] = (acc[curr.canal] || 0) + curr.ingreso;
+                            return acc;
+                          }, {} as Record<string, number>);
+
+                        const mainChannelName =
+                          Object.entries(mainChannel).sort((a, b) => b[1] - a[1])[0]?.[0] || "-";
+
+                        return (
+                          <tr key={product.name} className="border-b">
+                            <td className="px-4 py-3 font-medium">{product.name}</td>
+                            <td className="px-4 py-3">{mainChannelName}</td>
+                            <td className="px-4 py-3 text-right">{formatCurrency(product.value)}</td>
+                            <td className="px-4 py-3 text-right">{product.percentage}%</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="expenses">
+              <div className="grid md:grid-cols-2 gap-8 mb-8">
+                <div className="bg-white rounded-lg p-6 shadow-md">
+                  <h3 className="text-xl font-semibold mb-4 text-[#334a40]">Gastos por Categoría</h3>
+                  <div className="h-[350px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RechartsPieChart>
+                        <Pie
+                          data={expenseData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          outerRadius={120}
+                          fill="#8884d8"
+                          dataKey="value"
+                          label={({ name, percentage }) => `${name}: ${percentage}%`}
+                        >
+                          {expenseData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip formatter={(value) => formatCurrency(value as number)} />
+                        <Legend />
+                      </RechartsPieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-lg p-6 shadow-md">
+                  <h3 className="text-xl font-semibold mb-4 text-[#334a40]">Detalle de Gastos</h3>
+                  <div className="h-[350px] overflow-auto">
+                    <table className="w-full">
+                      <thead className="bg-gray-50 text-[#334a40]">
+                        <tr>
+                          <th className="px-4 py-2 text-left">Categoría</th>
+                          <th className="px-4 py-2 text-left">Principales Proveedores</th>
+                          <th className="px-4 py-2 text-right">Total</th>
                           <th className="px-4 py-2 text-right">% del Total</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {productData.map((product) => {
-                          // Find main channel for this product
-                          const mainChannel = ingresos
-                            .filter((i) => i.producto === product.name)
+                        {expenseData.map((category) => {
+                          const providers = egresos
+                            .filter((e) => e.tipo === category.name)
                             .reduce((acc, curr) => {
-                              acc[curr.canal] =
-                                (acc[curr.canal] || 0) + curr.ingreso;
+                              acc[curr.proveedor] = (acc[curr.proveedor] || 0) + curr.monto;
                               return acc;
                             }, {} as Record<string, number>);
 
-                          const mainChannelName =
-                            Object.entries(mainChannel).sort(
-                              (a, b) => b[1] - a[1]
-                            )[0]?.[0] || "-";
+                          const topProviders = Object.entries(providers)
+                            .sort((a, b) => b[1] - a[1])
+                            .slice(0, 2)
+                            .map(([name]) => name)
+                            .join(", ");
 
                           return (
-                            <tr key={product.name} className="border-b">
-                              <td className="px-4 py-3 font-medium">
-                                {product.name}
-                              </td>
-                              <td className="px-4 py-3">{mainChannelName}</td>
-                              <td className="px-4 py-3 text-right">
-                                {formatCurrency(product.value)}
-                              </td>
-                              <td className="px-4 py-3 text-right">
-                                {product.percentage}%
-                              </td>
+                            <tr key={category.name} className="border-b">
+                              <td className="px-4 py-3 font-medium">{category.name}</td>
+                              <td className="px-4 py-3">{topProviders || "-"}</td>
+                              <td className="px-4 py-3 text-right">{formatCurrency(category.value)}</td>
+                              <td className="px-4 py-3 text-right">{category.percentage}%</td>
                             </tr>
                           );
                         })}
@@ -825,114 +812,16 @@ export default function EnhancedDashboardPage() {
                     </table>
                   </div>
                 </div>
-              </TabsContent>
-
-              <TabsContent value="expenses">
-                <div className="grid md:grid-cols-2 gap-8 mb-8">
-                  <div className="bg-white rounded-lg p-6 shadow-md">
-                    <h3 className="text-xl font-semibold mb-4 text-[#334a40]">
-                      Gastos por Categoría
-                    </h3>
-                    <div className="h-[350px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <RechartsPieChart>
-                          <Pie
-                            data={expenseData}
-                            cx="50%"
-                            cy="50%"
-                            labelLine={false}
-                            outerRadius={120}
-                            fill="#8884d8"
-                            dataKey="value"
-                            label={({ name, percentage }) =>
-                              `${name}: ${percentage}%`
-                            }
-                          >
-                            {expenseData.map((entry, index) => (
-                              <Cell
-                                key={`cell-${index}`}
-                                fill={COLORS[index % COLORS.length]}
-                              />
-                            ))}
-                          </Pie>
-                          <Tooltip
-                            formatter={(value) =>
-                              formatCurrency(value as number)
-                            }
-                          />
-                          <Legend />
-                        </RechartsPieChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-
-                  <div className="bg-white rounded-lg p-6 shadow-md">
-                    <h3 className="text-xl font-semibold mb-4 text-[#334a40]">
-                      Detalle de Gastos
-                    </h3>
-                    <div className="h-[350px] overflow-auto">
-                      <table className="w-full">
-                        <thead className="bg-gray-50 text-[#334a40]">
-                          <tr>
-                            <th className="px-4 py-2 text-left">Categoría</th>
-                            <th className="px-4 py-2 text-left">
-                              Principales Proveedores
-                            </th>
-                            <th className="px-4 py-2 text-right">Total</th>
-                            <th className="px-4 py-2 text-right">
-                              % del Total
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {expenseData.map((category) => {
-                            // Find top providers for this category
-                            const providers = egresos
-                              .filter((e) => e.tipo === category.name)
-                              .reduce((acc, curr) => {
-                                acc[curr.proveedor] =
-                                  (acc[curr.proveedor] || 0) + curr.monto;
-                                return acc;
-                              }, {} as Record<string, number>);
-
-                            const topProviders = Object.entries(providers)
-                              .sort((a, b) => b[1] - a[1])
-                              .slice(0, 2)
-                              .map(([name]) => name)
-                              .join(", ");
-
-                            return (
-                              <tr key={category.name} className="border-b">
-                                <td className="px-4 py-3 font-medium">
-                                  {category.name}
-                                </td>
-                                <td className="px-4 py-3">
-                                  {topProviders || "-"}
-                                </td>
-                                <td className="px-4 py-3 text-right">
-                                  {formatCurrency(category.value)}
-                                </td>
-                                <td className="px-4 py-3 text-right">
-                                  {category.percentage}%
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-            </Tabs>
-
-            <div className="grid md:grid-cols-4 gap-8 mb-8">
-              <div className="bg-white rounded-lg p-6 shadow-md h-[500px] flex flex-col">
+              </div>
+            </TabsContent>
+          </Tabs>
+          <div className="grid md:grid-cols-4 gap-8 mb-8">
+              <div className="bg-white rounded-xl p-6 shadow-md h-[500px] flex flex-col">
                 <h3 className="text-xl font-semibold mb-4 text-[#334a40]">
                   Producto más vendido
                 </h3>
                 <div className="flex-grow flex flex-col justify-between">
-                  <div className="flex justify-center mb-4">
+                  <div className="flex justify-center mb-4 ">
                     <Image
                       src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Monstera%20(1)-xXeqKVdd3K9lPUOvTJKsSLFNL8ddM7.webp"
                       alt={kpis.productoMasVendido.nombre}
@@ -942,15 +831,15 @@ export default function EnhancedDashboardPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <h4 className="font-semibold">
+                    <h4 className="font-semibold text-[#334a40]">
                       {kpis.productoMasVendido.nombre}
                     </h4>
-                    <p>Canal: {kpis.productoMasVendido.canal}</p>
-                    <p>
+                    <p className=" text-[#334a40]" >Canal: {kpis.productoMasVendido.canal}</p>
+                    <p className=" text-[#334a40]">
                       Ventas totales:{" "}
                       {formatCurrency(kpis.productoMasVendido.ingreso)}
                     </p>
-                    <p>
+                    <p className=" text-[#334a40]">
                       Porcentaje de ventas:{" "}
                       {Math.round(
                         (kpis.productoMasVendido.ingreso / kpis.ventasTotales) *
@@ -1117,7 +1006,7 @@ export default function EnhancedDashboardPage() {
                     </h2>
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button variant="secondary" className="w-fit">
+                        <Button variant="secondary" className="w-fit ">
                           Agregar
                         </Button>
                       </DialogTrigger>
@@ -1180,9 +1069,9 @@ export default function EnhancedDashboardPage() {
                 </div>
               </div>
             </div>
-          </>
-        )}
-      </main>
-    </div>
+        </>
+      )}
+    </main>
+  </div>
   );
 }
