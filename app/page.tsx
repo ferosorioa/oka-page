@@ -42,6 +42,7 @@ import {
 import { DateRangePicker } from "@/components/ui/date-range-picker";
 import Header from "@/components/ui/header";
 
+
 // Initialize Supabase client
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
@@ -151,18 +152,23 @@ export default function EnhancedDashboardPage() {
   // Fetch data from Supabase
   useEffect(() => {
     async function fetchData() {
-      setLoading(true);
+      setLoading(true)
 
-      // Format dates for Supabase query
-      const fromDate = dateRange?.from?.toISOString().split("T")[0];
-      const toDate = dateRange?.to?.toISOString().split("T")[0];
+      // Extract the year from dateRange or use default
+      const selectedYear = dateRange?.from ? dateRange.from.getFullYear() : new Date().getFullYear() - 1 // Default to previous year if none selected
+
+      // Create exact timestamp strings with time component set to start/end of day
+      // This ensures we capture the entire day regardless of timezone
+      const fromDate = `${selectedYear}-01-01T00:00:00.000Z`
+      const toDate = `${selectedYear}-12-31T23:59:59.999Z`
+
+      console.log(`Fetching data from ${fromDate} to ${toDate}`)
 
       try {
-        // Fetch ingresos with all fields
+        // Fetch ingresos with explicit date formatting
         const { data: ingresosData, error: ingresosError } = await supabase
           .from("oka_ingresos")
-          .select(
-            `
+          .select(`
             id,
             canal,
             donde,
@@ -173,17 +179,15 @@ export default function EnhancedDashboardPage() {
             cuenta,
             fecha,
             nota
-          `
-          )
-          .gte("fecha", fromDate || "2024-01-01")
-          .lte("fecha", toDate || new Date().toISOString().split("T")[0])
-          .order("fecha", { ascending: false });
+          `)
+          .filter("fecha", "gte", fromDate)
+          .filter("fecha", "lt", `${Number(selectedYear) + 1}-01-01T00:00:00.000Z`)
+          .order("fecha", { ascending: false })
 
-        // Fetch egresos with all fields
+        // Fetch egresos with explicit date formatting
         const { data: egresosData, error: egresosError } = await supabase
           .from("oka_egresos")
-          .select(
-            `
+          .select(`
             id,
             tipo,
             concepto,
@@ -194,38 +198,43 @@ export default function EnhancedDashboardPage() {
             cuenta,
             fecha,
             notas
-          `
-          )
-          .gte("fecha", fromDate || "2023-01-01")
-          .lte("fecha", toDate || new Date().toISOString().split("T")[0])
-          .order("fecha", { ascending: false });
+          `)
+          .filter("fecha", "gte", fromDate)
+          .filter("fecha", "lt", `${Number(selectedYear) + 1}-01-01T00:00:00.000Z`)
+          .order("fecha", { ascending: false })
 
-        if (ingresosError) throw ingresosError;
-        if (egresosError) throw egresosError;
+        if (ingresosError) {
+          console.error("Error fetching ingresos:", ingresosError)
+          throw ingresosError
+        }
 
-        setIngresos(ingresosData || []);
-        setEgresos(egresosData || []);
+        if (egresosError) {
+          console.error("Error fetching egresos:", egresosError)
+          throw egresosError
+        }
 
-        // Get recent transactions (combine and sort ingresos and egresos)
+        setIngresos(ingresosData || [])
+        setEgresos(egresosData || [])
+
+        // Combine and sort transactions
         const combinedTransactions = [
           ...(ingresosData || []).map((i) => ({ ...i, type: "ingreso" })),
           ...(egresosData || []).map((e) => ({ ...e, type: "egreso" })),
         ]
-          .sort(
-            (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
-          )
-          .slice(0, 5); // Get only the 5 most recent
+          .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
+          .slice(0, 5)
 
-        setRecentTransactions(combinedTransactions);
+        setRecentTransactions(combinedTransactions)
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching data:", error)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
     }
 
-    fetchData();
-  }, [dateRange]);
+    fetchData()
+  }, [dateRange])
+  
 
   // Process data for charts and insights
   useEffect(() => {
@@ -250,6 +259,8 @@ export default function EnhancedDashboardPage() {
 
     // Expense category breakdown
     const expenseCategoryTotals = new Map<string, number>();
+
+    // Process ingresos
 
     // Process ingresos
     ingresos.forEach((ingreso) => {
@@ -340,7 +351,7 @@ export default function EnhancedDashboardPage() {
         const [year, month] = monthYear.split("-").map(Number);
         return {
           date: new Date(year, month - 1, 1),
-          name: monthNames[month - 1],
+          name: `${monthNames[month - 1]} ${year}`, // Now includes the year
           Ingresos: data.ingresos,
           Gastos: data.egresos,
           Bolsas: data.bolsas,
@@ -398,8 +409,12 @@ export default function EnhancedDashboardPage() {
         percentage: Math.round((value / totalEgresos) * 100),
       }))
       .sort((a, b) => b.value - a.value);
+    
+    
+
 
     setChartData(formattedData);
+    console.log("Chart Data:", formattedData);
     setProductData(formattedProductData);
     setChannelData(formattedChannelData);
     setExpenseData(formattedExpenseData);
@@ -476,8 +491,10 @@ export default function EnhancedDashboardPage() {
       year: "numeric",
     });
   };
+  
 
   return (
+    
     <div className="min-h-screen bg-[#fcf5f0]">
       <Header />
       <main className="max-w-7xl mx-auto px-4 py-8">
