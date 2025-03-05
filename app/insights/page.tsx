@@ -1,192 +1,151 @@
-"use client"
+// app/insights/page.tsx (Server Component)
+import React from 'react';
+import { supabase } from '@/hooks/supabase'; // or wherever your server client is
+import KpiCards from '@/components/ui/kpi_card';
+import MonthlySalesChart from '@/components/ui/monthly_sales_chart';
+import IngresosPieChart from '@/components/ui/ingresos_pie';
+import TopProductsTable from '@/components/ui/top_products';
+import Header from '@/components/ui/header';
 
-import { useState } from "react"
-import Image from "next/image"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import Header from "@/components/ui/header"
+// Optional: Control revalidation (ISR). 
+// revalidate = 0 => no caching; fetch fresh on every request.
+export const revalidate = 60; // revalidate data every 60s, for example
 
-interface Movement {
-  tipo: string
-  cantidad: string
-  fecha: string
-  comentarios: string
-}
+export default async function InsightsPage() {
+  // -------------------------
+  // 1. Fetch data from DB
+  // -------------------------
+  const { data: ventasData, error: ventasError } = await supabase
+    .from('ventas')
+    .select('precio_total, fecha');
+  if (ventasError) {
+    console.error('Ventas error:', ventasError);
+  }
 
-export default function InsightsPage() {
-  const [movements] = useState<Movement[]>([
-    {
-      tipo: "Ingreso",
-      cantidad: "$1000",
-      fecha: "20-02-2024",
-      comentarios: "--------",
-    },
-    {
-      tipo: "Egreso",
-      cantidad: "$1000",
-      fecha: "18-02-2024",
-      comentarios: "Pago a terceros",
-    },
-    {
-      tipo: "Egreso",
-      cantidad: "$1000",
-      fecha: "16-02-2024",
-      comentarios: "------",
-    },
-    {
-      tipo: "Ingreso",
-      cantidad: "$1000",
-      fecha: "15-02-2024",
-      comentarios: "Venta de Bolsa",
-    },
-  ])
+  const { data: egresosData, error: egresosError } = await supabase
+    .from('egresos')
+    .select('monto');
+  if (egresosError) {
+    console.error('Egresos error:', egresosError);
+  }
 
+  const { data: ingresosData, error: ingresosError } = await supabase
+    .from('ingresos')
+    .select('monto, cliente_tipo, fecha');
+  if (ingresosError) {
+    console.error('Ingresos error:', ingresosError);
+  }
+
+  // -------------------------
+  // 2. Compute KPI totals
+  // -------------------------
+  // Total Sales
+  let totalSales = 0;
+  ventasData?.forEach((v) => {
+    totalSales += Number(v.precio_total);
+  });
+
+  // Total Expenses
+  let totalExpenses = 0;
+  egresosData?.forEach((e) => {
+    totalExpenses += Number(e.monto);
+  });
+
+  // Total Ingresos
+  let totalIngresos = 0;
+  ingresosData?.forEach((i) => {
+    totalIngresos += Number(i.monto);
+  });
+
+  // -------------------------
+  // 3. Monthly Sales Data
+  // -------------------------
+  // We'll group sales by month. If your DB has big data, do this grouping in SQL.
+  const monthlySalesMap: Record<string, number> = {};
+  ventasData?.forEach((venta) => {
+    if (!venta.fecha) return;
+    const date = new Date(venta.fecha);
+    const yearMonth = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    monthlySalesMap[yearMonth] = (monthlySalesMap[yearMonth] || 0) + Number(venta.precio_total);
+  });
+  // Convert object to array for Recharts
+  const monthlySalesData = Object.entries(monthlySalesMap).map(([month, total]) => ({
+    month,
+    totalSales: total,
+  }));
+
+  // -------------------------
+  // 4. Ingresos: B2B vs B2C
+  // -------------------------
+  let b2bIngresos = 0;
+  let b2cIngresos = 0;
+  ingresosData?.forEach((ing) => {
+    if (ing.cliente_tipo === 'b2b') {
+      b2bIngresos += Number(ing.monto);
+    } else if (ing.cliente_tipo === 'b2c') {
+      b2cIngresos += Number(ing.monto);
+    }
+  });
+
+  const ingresosPieData = [
+    { name: 'B2B', value: b2bIngresos },
+    { name: 'B2C', value: b2cIngresos },
+  ];
+
+  // -------------------------
+  // 5. Top Products Example
+  // -------------------------
+  // If you want a top products table, you can fetch from ventas_detalle, group by product, then join product name.
+  const { data: detalleData, error: detalleError } = await supabase
+    .from('ventas_detalle')
+    .select('producto_id, cantidad');
+  if (detalleError) {
+    console.error('Ventas detalle error:', detalleError);
+  }
+
+  const productTotals: Record<string, number> = {};
+  detalleData?.forEach((d) => {
+    productTotals[d.producto_id] = (productTotals[d.producto_id] || 0) + Number(d.cantidad);
+  });
+
+  // get product names
+  const productIds = Object.keys(productTotals);
+  let productMap: Record<string, string> = {};
+  if (productIds.length) {
+    const { data: productosData } = await supabase
+      .from('productos')
+      .select('id, nombre')
+      .in('id', productIds);
+    if (productosData) {
+      productosData.forEach((p) => {
+        productMap[p.id] = p.nombre;
+      });
+    }
+  }
+
+  const topProducts = Object.entries(productTotals)
+    .map(([pid, totalSold]) => ({
+      productName: productMap[pid] || pid,
+      totalSold,
+    }))
+    .sort((a, b) => b.totalSold - a.totalSold)
+    .slice(0, 5);
+
+  // -------------------------
+  // 6. Render Page
+  // -------------------------
   return (
     <div className="min-h-screen bg-[#fcf5f0]">
       <Header />
       <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
-          {/* Ingresos Card */}
-          <div className="relative overflow-hidden rounded-xl h-64">
-            <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Photographer%20Image.jpg-sDJognuYKhCWt0R130JVIbCY6NZBRl.jpeg"
-              alt="Ingresos background"
-              fill
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-black/20" />
-            <div className="absolute inset-0 p-6 flex flex-col justify-between">
-              <h2 className="text-3xl font-semibold text-white">Ingresos</h2>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="secondary" className="w-fit">
-                    Agregar
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Agregar Ingreso</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                      <Label>Cantidad</Label>
-                      <Input type="number" placeholder="$0.00" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Comentarios</Label>
-                      <Textarea placeholder="Agregar comentarios..." />
-                    </div>
-                    <Button className="w-full">Guardar</Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
-          </div>
-
-          {/* Egresos Card */}
-          <div className="relative overflow-hidden rounded-xl h-64">
-            <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Refined%20Minimalist.jpg-yYxxXrTzjCzIRi4hhTVyeizl1SOpyM.jpeg"
-              alt="Egresos background"
-              fill
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-black/20" />
-            <div className="absolute inset-0 p-6 flex flex-col justify-between">
-              <h2 className="text-3xl font-semibold text-white">Egresos</h2>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="secondary" className="w-fit">
-                    Agregar
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Agregar Egreso</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                      <Label>Cantidad</Label>
-                      <Input type="number" placeholder="$0.00" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Comentarios</Label>
-                      <Textarea placeholder="Agregar comentarios..." />
-                    </div>
-                    <Button className="w-full">Guardar</Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
-          </div>
-
-          {/* Comentarios Card */}
-          <div className="relative overflow-hidden rounded-xl h-64">
-            <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Green%20Plant%20Haven.jpg-dUYH3gUyU68jRA0w67p3Qbsf2pKVx6.jpeg"
-              alt="Comentarios background"
-              fill
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-black/20" />
-            <div className="absolute inset-0 p-6 flex flex-col justify-between">
-              <h2 className="text-3xl font-semibold text-white">Comentarios</h2>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="secondary" className="w-fit">
-                    Agregar
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Agregar Comentario</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                      <Label>Comentario</Label>
-                      <Textarea placeholder="Agregar comentario..." />
-                    </div>
-                    <Button className="w-full">Guardar</Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
-          </div>
+        <h1 className="text-2xl font-bold">Insights</h1>
+        <KpiCards totalSales={totalSales} totalExpenses={totalExpenses} totalIngresos={totalIngresos} />
+        <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', marginTop: '2rem' }}>
+          <MonthlySalesChart data={monthlySalesData} />
+          <IngresosPieChart data={ingresosPieData} />
         </div>
-
-        <div className="bg-[#344b41] p-4 rounded-t-lg">
-          <h2 className="text-3xl handwritten text-white">Movimientos Recientes</h2>
-        </div>
-
-        <div className="bg-white rounded-b-lg shadow-md overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-[#9db1aa] text-[#334a40]">
-                <tr>
-                  <th className="px-6 py-3 text-left text-sm font-semibold">Tipo</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold">Cantidad</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold">Fecha</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold">Comentarios</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {movements.map((movement, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm text-gray-900">{movement.tipo}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{movement.cantidad}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{movement.fecha}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{movement.comentarios}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <TopProductsTable products={topProducts} />
       </main>
     </div>
-  )
+  );
 }
-
