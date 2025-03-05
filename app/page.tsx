@@ -11,7 +11,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ShoppingCart, BarChart3, PieChart, TrendingUp } from "lucide-react"
 import type { DateRange } from "react-day-picker"
-import { createClient } from "@supabase/supabase-js"
 import {
   Line,
   LineChart,
@@ -29,14 +28,7 @@ import {
 } from "@/components/ui/chart"
 import { DateRangePicker } from "@/components/ui/date-range-picker"
 import Header from "@/components/ui/header"
-
-// Initialize Supabase client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables')
-}
-const supabase = createClient(supabaseUrl, supabaseAnonKey)
+import { supabase } from "@/hooks/supabase"
 
 // Type definitions for our Supabase tables
 type Ingreso = {

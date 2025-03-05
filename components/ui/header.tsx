@@ -26,9 +26,6 @@ export default function Header() {
           <Link href="/" className="text-[#334a40] hover:text-[#688078] transition-colors">
             Dashboard
           </Link>
-          <Link href="/ventas" className="text-[#334a40] hover:text-[#688078] transition-colors">
-            Portal de Ventas
-          </Link>
           <Link href="/insights" className="text-[#334a40] hover:text-[#688078] transition-colors">
             Insights
           </Link>
