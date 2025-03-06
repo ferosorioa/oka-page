@@ -27,3 +27,7 @@ package-lock.json
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# pnpm
+pnpm-lock.yaml
+package.json

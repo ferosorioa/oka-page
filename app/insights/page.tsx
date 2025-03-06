@@ -6,6 +6,7 @@ import MonthlySalesChart from '@/components/ui/monthly_sales_chart';
 import IngresosPieChart from '@/components/ui/ingresos_pie';
 import TopProductsTable from '@/components/ui/top_products';
 import Header from '@/components/ui/header';
+import ChatAssistant from '@/components/ui/chat_assistant';
 
 // Optional: Control revalidation (ISR). 
 // revalidate = 0 => no caching; fetch fresh on every request.
@@ -146,6 +147,8 @@ export default async function InsightsPage() {
         </div>
         <TopProductsTable products={topProducts} />
       </main>
+      <ChatAssistant />
+
     </div>
   );
 }
