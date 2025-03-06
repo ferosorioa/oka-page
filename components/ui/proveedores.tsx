@@ -3,11 +3,14 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { supabase } from "@/hooks/supabase";
-
 
 type Proveedor = {
   id: string;
@@ -38,7 +41,9 @@ export default function Proveedores() {
       return;
     }
 
-    const { data, error } = await supabase.from("proveedores").insert([{ name: newProveedor }]);
+    const { data, error } = await supabase
+      .from("proveedores")
+      .insert([{ name: newProveedor }]);
 
     if (error) {
       console.error("Error adding provider:", error);
@@ -49,23 +54,52 @@ export default function Proveedores() {
     }
   }
 
+  // Define a consistent style for table cells.
+  const cellStyle: React.CSSProperties = {
+    padding: "0.5rem",
+    textAlign: "left",
+  };
+
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Proveedores</h1>
+    <div className="">
+      <div className="flex justify-between items-center mb-4 bg-muted p-4 rounded-lg shadow-lg">
+        <h1 className="text-2xl font-bold text-white">Proveedores</h1>
         <Button onClick={() => setIsDialogOpen(true)}>Agregar Proveedor</Button>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {proveedores.map((proveedor) => (
-          <Card key={proveedor.id} className="border rounded-md shadow-lg hover:shadow-xl transition-shadow">
-            <CardHeader>
-              <CardTitle>{proveedor.name}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>ID: {proveedor.id}</p>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="p-4">
+      <table
+        style={{ width: "100%", borderCollapse: "collapse", marginTop: "1rem" }}
+        className="p-4"
+      >
+        <thead>
+          <tr style={{ borderBottom: "2px solid #ccc" }}>
+            <th
+              className="px-4 py-2 bg-primary text-white"
+              style={cellStyle}
+            >
+              Nombre
+            </th>
+            <th
+              className="px-4 py-2 bg-primary text-white"
+              style={cellStyle}
+            >
+              ID
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {proveedores.map((proveedor) => (
+            <tr
+              key={proveedor.id}
+              style={{ borderBottom: "1px solid #eee" }}
+              className="odd:bg-gray-100 even:bg-secondary"
+            >
+              <td style={cellStyle}>{proveedor.name}</td>
+              <td style={cellStyle}>{proveedor.id}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
       </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -74,7 +108,9 @@ export default function Proveedores() {
             <DialogTitle>Agregar Nuevo Proveedor</DialogTitle>
           </DialogHeader>
           <div className="mb-4">
-            <label className="block text-sm font-medium">Nombre del Proveedor</label>
+            <label className="block text-sm font-medium">
+              Nombre del Proveedor
+            </label>
             <Input
               type="text"
               placeholder="Nombre"
@@ -84,10 +120,12 @@ export default function Proveedores() {
             />
           </div>
           <DialogFooter>
-            <Button onClick={addProveedor} className="w-full">Guardar</Button>
+            <Button onClick={addProveedor} className="w-full">
+              Guardar
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
   );
-} 
+}

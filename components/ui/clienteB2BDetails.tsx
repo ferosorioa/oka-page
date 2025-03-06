@@ -81,7 +81,7 @@ export default function ClienteB2BDetails({ cliente, onBack }: ClienteB2BDetails
   return (
     <div className="p-4">
       <Button onClick={onBack} className="mb-4">Volver</Button>
-      <h1 className="text-2xl font-bold">{cliente.empresa}</h1>
+      <h1 className="text-2xl font-bold text-primary">{cliente.empresa}</h1>
       <p>RFC: {cliente.rfc}</p>
       <p>Contacto Principal: {cliente.contacto_principal}</p>
       <p>Website: {cliente.website}</p>
@@ -91,8 +91,8 @@ export default function ClienteB2BDetails({ cliente, onBack }: ClienteB2BDetails
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {contacts.map((contact) => (
           <Card key={contact.id} className="border rounded-md shadow-lg hover:shadow-xl transition-shadow">
-            <CardHeader>
-              <CardTitle>{contact.nombre}</CardTitle>
+            <CardHeader className="bg-muted p-4">
+              <CardTitle className="text-white">{contact.nombre}</CardTitle>
             </CardHeader>
             <CardContent>
               <p>Email: {contact.email}</p>

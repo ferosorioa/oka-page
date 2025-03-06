@@ -1,27 +1,26 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useEffect } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
-import { supabase } from "@/hooks/supabase";
-
+import { supabase } from "@/hooks/supabase"
 
 type Product = {
-  id: string;
-  nombre: string;
-  descripcion: string;
-  precio: string;
-  costo: string;
-  stock: number;
-  created_at: string;
-  image: string;
-};
+  id: string
+  nombre: string
+  descripcion: string
+  precio: string
+  costo: string
+  stock: number
+  created_at: string
+  image: string
+}
 
 export default function Products() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>([])
   const [newProduct, setNewProduct] = useState({
     nombre: "",
     descripcion: "",
@@ -29,82 +28,83 @@ export default function Products() {
     costo: "",
     stock: 0,
     image: "",
-  });
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortOption, setSortOption] = useState("");
+  })
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [sortOption, setSortOption] = useState("")
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    fetchProducts()
+  }, [])
 
   async function fetchProducts() {
-    const { data, error } = await supabase.from("productos").select("*");
+    const { data, error } = await supabase.from("productos").select("*")
     if (error) {
-      console.error("Error fetching products:", error);
+      console.error("Error fetching products:", error)
     } else {
-      setProducts(data || []);
+      setProducts(data || [])
     }
   }
 
   async function addProduct() {
     if (!newProduct.nombre || !newProduct.precio || !newProduct.costo || !newProduct.stock) {
-      console.error("All fields are required");
-      return;
+      console.error("All fields are required")
+      return
     }
 
-    const { data, error } = await supabase.from("productos").insert([newProduct]);
+    const { data, error } = await supabase.from("productos").insert([newProduct])
 
     if (error) {
-      console.error("Error adding product:", error);
+      console.error("Error adding product:", error)
     } else {
-      setNewProduct({ nombre: "", descripcion: "", precio: "", costo: "", stock: 0, image: "" });
-      setIsDialogOpen(false);
-      fetchProducts();
+      setNewProduct({ nombre: "", descripcion: "", precio: "", costo: "", stock: 0, image: "" })
+      setIsDialogOpen(false)
+      fetchProducts()
     }
   }
 
   const sortedProducts = [...products].sort((a, b) => {
     switch (sortOption) {
       case "price-asc":
-        return parseFloat(a.precio) - parseFloat(b.precio);
+        return Number.parseFloat(a.precio) - Number.parseFloat(b.precio)
       case "price-desc":
-        return parseFloat(b.precio) - parseFloat(a.precio);
+        return Number.parseFloat(b.precio) - Number.parseFloat(a.precio)
       case "cost-asc":
-        return parseFloat(a.costo) - parseFloat(b.costo);
+        return Number.parseFloat(a.costo) - Number.parseFloat(b.costo)
       case "cost-desc":
-        return parseFloat(b.costo) - parseFloat(a.costo);
+        return Number.parseFloat(b.costo) - Number.parseFloat(a.costo)
       case "stock-asc":
-        return a.stock - b.stock;
+        return a.stock - b.stock
       case "stock-desc":
-        return b.stock - a.stock;
+        return b.stock - a.stock
       default:
-        return 0;
+        return 0
     }
-  });
+  })
 
-  const filteredProducts = sortedProducts.filter(product =>
-    product.nombre.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    product.descripcion.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredProducts = sortedProducts.filter(
+    (product) =>
+      product.nombre.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.descripcion.toLowerCase().includes(searchQuery.toLowerCase()),
+  )
 
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Productos</h1>
+    <div className="">
+      <div className="flex justify-between items-center mb-4  bg-muted p-4 rounded-lg shadow-lg">
+        <h1 className="text-2xl font-bold text-white">Productos</h1>
         <Button onClick={() => setIsDialogOpen(true)}>Agregar Producto</Button>
       </div>
-      <div className="mb-4">
+      <div className="mb-4 p-4">
         <label className="block text-sm font-medium mb-1">Buscar Productos</label>
         <Input
           type="text"
           placeholder="Buscar productos..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="mb-4"
+          className="w-full pl-10 pr-4 py-2 border rounded-md bg-white/80 backdrop-blur-sm shadow-md placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
-      <div className="flex space-x-4 mb-4">
+      <div className="flex space-x-4 mb-4 p-4">
         <div>
           <label className="block text-sm font-medium mb-1">Ordenar por</label>
           <select
@@ -122,20 +122,38 @@ export default function Products() {
           </select>
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
         {filteredProducts.map((product) => (
-          <Card key={product.id} className="border rounded-md shadow-lg hover:shadow-xl transition-shadow">
-            <CardHeader>
-              <CardTitle>{product.nombre}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <img src={product.image} alt={product.nombre} className="h-48 w-full object-contain mb-2 rounded-md" />
-              <p className="text-gray-700">{product.descripcion}</p>
-              <p className="font-semibold">Precio: ${product.precio}</p>
-              <p className="font-semibold">Costo: ${product.costo}</p>
-              <p className="font-semibold">Stock: {product.stock}</p>
-            </CardContent>
-          </Card>
+          <Card
+          key={product.id}
+          className="group border rounded-md shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-muted hover:shadow-xl"
+        >
+          <CardHeader>
+            <CardTitle className="text-primary group-hover:text-white transition-colors duration-300">
+              {product.nombre}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <img
+              src={product.image || "/placeholder.svg"}
+              alt={product.nombre}
+              className="h-48 w-full object-contain mb-2 rounded-md"
+            />
+            <p className="text-gray-700 group-hover:text-white transition-colors duration-300">
+              {product.descripcion}
+            </p>
+            <p className="font-semibold group-hover:text-white transition-colors duration-300">
+              Precio: ${product.precio}
+            </p>
+            <p className="font-semibold group-hover:text-white transition-colors duration-300">
+              Costo: ${product.costo}
+            </p>
+            <p className="font-semibold group-hover:text-white transition-colors duration-300">
+              Stock: {product.stock}
+            </p>
+          </CardContent>
+        </Card>
+        
         ))}
       </div>
 
@@ -182,7 +200,7 @@ export default function Products() {
               type="number"
               placeholder="Stock"
               value={newProduct.stock}
-              onChange={(e) => setNewProduct({ ...newProduct, stock: parseInt(e.target.value) })}
+              onChange={(e) => setNewProduct({ ...newProduct, stock: Number.parseInt(e.target.value) })}
               className="mb-2"
             />
             <label className="block text-sm font-medium">Imagen URL</label>
@@ -195,10 +213,13 @@ export default function Products() {
             />
           </div>
           <DialogFooter>
-            <Button onClick={addProduct} className="w-full">Guardar</Button>
+            <Button onClick={addProduct} className="w-full">
+              Guardar
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
-  );
-} 
+  )
+}
+

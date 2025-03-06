@@ -20,18 +20,28 @@ type MonthlySalesChartProps = {
   }[];
 };
 
+function formatAbbreviatedNumber(value: number): string {
+  if (Math.abs(value) >= 1e6) {
+    return (value / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+  } else if (Math.abs(value) >= 1e3) {
+    return (value / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
+  } else {
+    return value.toFixed(0);
+  }
+}
+
 export default function MonthlySalesChart({ data }: MonthlySalesChartProps) {
   return (
-    <div style={{ width: '400px', height: '300px' }}>
-      <h3>Monthly Sales</h3>
+    <div style={{ width: '500px', height: '400px' }} className="p-4">
+      <h3 className="text-lg font-bold">Monthly Sales</h3>
       <ResponsiveContainer>
         <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="month" />
-          <YAxis />
-          <Tooltip />
+          <YAxis tickFormatter={formatAbbreviatedNumber} />
+          <Tooltip formatter={(value: number) => formatAbbreviatedNumber(value)} />
           <Legend />
-          <Bar dataKey="totalSales" fill="#8884d8" />
+          <Bar dataKey="totalSales" fill="#688078" />
         </BarChart>
       </ResponsiveContainer>
     </div>
