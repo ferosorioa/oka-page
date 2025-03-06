@@ -122,11 +122,11 @@ export default function ClientesB2B() {
                 </p>
                 <p className="flex flex-wrap gap-1">
                   <span className="text-primary font-semibold">Website:</span>
-                  <span className="font-normal">{cliente.website}</span>
+                  <span className="font-normal overflow-scroll">{cliente.website}</span>
                 </p>
                 <p className="flex flex-wrap gap-1 bg-secondary p-3 rounded-xl">
                   <span className="text-primary font-semibold">Notas:</span>
-                  <span className="font-normal">{cliente.notas}</span>
+                  <span className="font-normal text-primary">{cliente.notas}</span>
                 </p>
               </div>
             </CardContent>
