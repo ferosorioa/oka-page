@@ -89,12 +89,12 @@ export default function Locations() {
   }
 
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-4  bg-muted p-4 rounded-lg shadow-lg">
+    <div className="">
+      <div className="flex justify-between items-center mb-4  bg-muted p-4 rounded-lg shadow-lg ">
         <h1 className="text-2xl font-bold  text-white">Ubicaciones</h1>
         <Button onClick={() => setIsDialogOpen(true)}>Agregar Ubicación</Button>
       </div>
-      <div className="mb-4 relative">
+      <div className="mb-4 relative p-2">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <svg
             className="h-5 w-5 text-gray-400"
@@ -119,32 +119,36 @@ export default function Locations() {
           className="w-full pl-10 pr-4 py-2 border rounded-md bg-white/80 backdrop-blur-sm shadow-md placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
-      <ScrollArea className="h-[400px] border rounded-md">
-      <table className="w-full">
-  <thead>
-    <tr>
-      <th className="px-4 py-2 bg-primary text-white">Nombre</th>
-      <th className="px-4 py-2 bg-primary text-white">Ciudad</th>
-      <th className="px-4 py-2 bg-primary text-white">Estado</th>
-      <th className="px-4 py-2 bg-primary text-white">País</th>
-      <th className="px-4 py-2 bg-primary text-white">Creado</th>
-    </tr>
-  </thead>
-  <tbody>
-    {filteredLocations.map((location) => (
-      <tr key={location.id} className="odd:bg-gray-100 even:bg-secondary">
-        <td className="px-4 py-2">{location.nombre}</td>
-        <td className="px-4 py-2">{location.ciudad}</td>
-        <td className="px-4 py-2">{location.estado}</td>
-        <td className="px-4 py-2">{location.pais}</td>
-        <td className="px-4 py-2">
-          {new Date(location.created_at).toLocaleDateString()}
-        </td>
-      </tr>
-    ))}
-  </tbody>
-</table>
-
+      <ScrollArea className="h-[700px] border rounded-md">
+        <div className="p-4">
+          <table className="w-full">
+            <thead>
+              <tr>
+                <th className="px-4 py-2 bg-primary text-white">Nombre</th>
+                <th className="px-4 py-2 bg-primary text-white">Ciudad</th>
+                <th className="px-4 py-2 bg-primary text-white">Estado</th>
+                <th className="px-4 py-2 bg-primary text-white">País</th>
+                <th className="px-4 py-2 bg-primary text-white">Creado</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredLocations.map((location) => (
+                <tr
+                  key={location.id}
+                  className="odd:bg-gray-100 even:bg-secondary"
+                >
+                  <td className="px-4 py-2">{location.nombre}</td>
+                  <td className="px-4 py-2">{location.ciudad}</td>
+                  <td className="px-4 py-2">{location.estado}</td>
+                  <td className="px-4 py-2">{location.pais}</td>
+                  <td className="px-4 py-2">
+                    {new Date(location.created_at).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </ScrollArea>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
