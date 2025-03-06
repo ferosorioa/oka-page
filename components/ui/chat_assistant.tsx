@@ -100,7 +100,7 @@ export default function ChatAssistant() {
   return (
     <div className="fixed bottom-4 right-4 z-50">
       {isOpen ? (
-        <Card className="w-80 sm:w-96 shadow-lg">
+        <Card className="w-80 sm:w-96 shadow-lg bg-white">
           <div className="bg-primary p-3 text-white flex justify-between items-center rounded-t-lg">
             <h3 className="font-medium flex items-center">
               <MessageSquare className="mr-2 h-5 w-5" />
