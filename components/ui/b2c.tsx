@@ -29,7 +29,7 @@ export default function B2CSalesProcess() {
   }
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-4">
+    <div className=" ">
       <div className="flex justify-between items-center mb-4  bg-muted p-4 rounded-lg shadow-lg">
         <h1 className="text-2xl font-bold  text-white">Ventas B2C</h1>
       </div>

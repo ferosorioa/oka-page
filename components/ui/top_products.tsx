@@ -15,17 +15,17 @@ type TopProductsTableProps = {
 export default function TopProductsTable({ products }: TopProductsTableProps) {
   return (
     <div style={{ marginTop: '2rem' }}>
-      <h3>Top Selling Products</h3>
+      <h3 className='font-bold text-lg text-primary'>Top Selling Products</h3>
       <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
         <thead>
           <tr style={{ borderBottom: '2px solid #ccc' }}>
-            <th style={cellStyle}>Product</th>
-            <th style={cellStyle}>Total Sold</th>
+            <th  className="px-4 py-2 bg-primary text-white" style={cellStyle}>Product</th>
+            <th  className="px-4 py-2 bg-primary text-white" style={cellStyle}>Total Sold</th>
           </tr>
         </thead>
         <tbody>
           {products.map((p) => (
-            <tr key={p.productName} style={{ borderBottom: '1px solid #eee' }}>
+            <tr key={p.productName} style={{ borderBottom: '1px solid #eee' }} className="odd:bg-gray-100 even:bg-secondary">
               <td style={cellStyle}>{p.productName}</td>
               <td style={cellStyle}>{p.totalSold}</td>
             </tr>

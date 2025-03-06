@@ -1,7 +1,7 @@
 // app/insights/KpiCards.tsx
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 
 type KpiCardsProps = {
   totalSales: number;
@@ -15,32 +15,54 @@ export default function KpiCards({
   totalIngresos,
 }: KpiCardsProps) {
   return (
-    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-      <div style={cardStyle}>
-        <h3>Total Sales</h3>
-        <p style={valueStyle}>${totalSales.toFixed(2)}</p>
+    <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+      <div style={cardStyle} className="group hover:bg-muted">
+        <h3 className="text-primary font-bold group-hover:text-white">
+          Total Sales
+        </h3>
+        <p style={valueStyle} className="group-hover:text-white">
+          ${formatAbbreviatedNumber(totalSales)}
+        </p>
       </div>
-      <div style={cardStyle}>
-        <h3>Total Expenses</h3>
-        <p style={valueStyle}>${totalExpenses.toFixed(2)}</p>
+      <div style={cardStyle} className="group hover:bg-muted">
+        <h3 className="text-primary font-bold group-hover:text-white">
+          Total Expenses
+        </h3>
+        <p style={valueStyle} className="group-hover:text-white">
+          ${formatAbbreviatedNumber(totalExpenses)}
+        </p>
       </div>
-      <div style={cardStyle}>
-        <h3>Total Ingresos</h3>
-        <p style={valueStyle}>${totalIngresos.toFixed(2)}</p>
+      <div style={cardStyle} className="group hover:bg-muted">
+        <h3 className="text-primary font-bold group-hover:text-white">
+          Total Ingresos
+        </h3>
+        <p style={valueStyle} className="group-hover:text-white">
+          ${formatAbbreviatedNumber(totalIngresos)}
+        </p>
       </div>
     </div>
   );
 }
 
+function formatAbbreviatedNumber(value: number): string {
+  if (Math.abs(value) >= 1e6) {
+    return (value / 1e6).toFixed(1).replace(/\.0$/, "") + "M";
+  } else if (Math.abs(value) >= 1e3) {
+    return (value / 1e3).toFixed(1).replace(/\.0$/, "") + "K";
+  } else {
+    return value.toFixed(2);
+  }
+}
+
 const cardStyle: React.CSSProperties = {
-  border: '1px solid #ccc',
-  borderRadius: '8px',
-  padding: '1rem',
-  flex: '1',
-  minWidth: '200px',
+  border: "1px solid #ccc",
+  borderRadius: "8px",
+  padding: "1rem",
+  flex: "1",
+  minWidth: "200px",
 };
 
 const valueStyle: React.CSSProperties = {
-  fontSize: '1.5rem',
-  fontWeight: 'bold',
+  fontSize: "1.5rem",
+  fontWeight: "bold",
 };
