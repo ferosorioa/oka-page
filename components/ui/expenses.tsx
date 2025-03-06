@@ -139,26 +139,44 @@ export default function Expenses() {
 
   return (
     <div className="p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Gastos</h1>
+      <div className="flex justify-between items-center mb-4  bg-muted p-4 rounded-lg shadow-lg">
+        <h1 className="text-2xl font-bold text-white">Gastos</h1>
         <Button onClick={() => setIsDialogOpen(true)}>Registrar Gasto</Button>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {expenses.map((expense) => (
           <Card key={expense.id} className="border rounded-md shadow-lg hover:shadow-xl transition-shadow">
-            <CardHeader>
-              <CardTitle>{expense.concepto}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>Cliente: {clientesB2B.find(cliente => cliente.id === expense.b2b_cliente_id)?.empresa || "N/A"}</p>
-              <p>Tipo: {expenseTypes.find(type => type.id === expense.tipo)?.name || "N/A"}</p>
-              <p>Proveedor: {proveedores.find(proveedor => proveedor.id === expense.proveedor)?.name || "N/A"}</p>
-              <p>Monto: ${expense.monto}</p>
-              <p>Método de Pago: {expense.metodo_pago}</p>
-              <p>Fecha: {new Date(expense.fecha).toLocaleDateString()}</p>
-              <p>Notas: {expense.notas}</p>
-            </CardContent>
-          </Card>
+          <CardHeader className="bg-primary p-4">
+            <CardTitle className="text-primary-foreground font-bold text-lg">{expense.concepto}</CardTitle>
+          </CardHeader>
+          <CardContent className="p-4">
+            <p>
+              <span className="font-bold text-primary">Cliente:</span>{" "}
+              {clientesB2B.find(cliente => cliente.id === expense.b2b_cliente_id)?.empresa || "N/A"}
+            </p>
+            <p>
+              <span className="font-bold text-primary">Tipo:</span>{" "}
+              {expenseTypes.find(type => type.id === expense.tipo)?.name || "N/A"}
+            </p>
+            <p>
+              <span className="font-bold text-primary">Proveedor:</span>{" "}
+              {proveedores.find(proveedor => proveedor.id === expense.proveedor)?.name || "N/A"}
+            </p>
+            <p>
+              <span className="font-bold text-primary">Monto:</span> ${expense.monto}
+            </p>
+            <p>
+              <span className="font-bold text-primary">Método de Pago:</span> {expense.metodo_pago}
+            </p>
+            <p>
+              <span className="font-bold text-primary">Fecha:</span> {new Date(expense.fecha).toLocaleDateString()}
+            </p>
+            <p>
+              <span className="font-bold text-primary">Notas:</span> {expense.notas}
+            </p>
+          </CardContent>
+        </Card>
+        
         ))}
       </div>
 

@@ -51,20 +51,26 @@ export default function Proveedores() {
 
   return (
     <div className="p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Proveedores</h1>
+      <div className="flex justify-between items-center mb-4  bg-muted p-4 rounded-lg shadow-lg">
+        <h1 className="text-2xl font-bold text-white">Proveedores</h1>
         <Button onClick={() => setIsDialogOpen(true)}>Agregar Proveedor</Button>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {proveedores.map((proveedor) => (
           <Card key={proveedor.id} className="border rounded-md shadow-lg hover:shadow-xl transition-shadow">
-            <CardHeader>
-              <CardTitle>{proveedor.name}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>ID: {proveedor.id}</p>
-            </CardContent>
-          </Card>
+          <CardHeader className="bg-primary p-4">
+            <CardTitle className="text-primary-foreground font-bold text-lg">{proveedor.name}</CardTitle>
+          </CardHeader>
+          <CardContent className="p-4">
+            <p>
+              <span className="font-bold text-primary">Nombre:</span> {proveedor.name}
+            </p>
+            <p>
+              <span className="font-bold text-primary">ID:</span> {proveedor.id}
+            </p>
+          </CardContent>
+        </Card>
+        
         ))}
       </div>
 
