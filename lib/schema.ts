@@ -6,8 +6,6 @@ Tables:
 - contactos(id, cliente_b2b_id, nombre, email, telefono, puesto)
 - egresos(id, b2b_cliente_id, tipo, concepto, proveedor, monto, metodo_pago, fecha, notas, created_at)
 - ingresos(id, cliente_id, cliente_tipo, monto, fecha, nota)
-- oka_egresos(id, tipo, concepto, actor, proveedor, monto, metodo, cuenta, fecha, notas)
-- oka_ingresos(id, canal, donde, producto, recibe, ingreso, metodo, cuenta, fecha, nota, tipo_venta)
 - productos(id, nombre, descripcion, precio, costo, stock, created_at, image)
 - proveedores(id, created_at, name)
 - types_expense(id, created_at, name)
