@@ -154,7 +154,7 @@ export default function Expenses() {
     <div className="">
       <div className="flex justify-between items-center mb-4 bg-muted p-4 rounded-lg shadow-lg">
         <h1 className="text-2xl font-bold text-white">Gastos</h1>
-        <Button onClick={() => setIsDialogOpen(true)}>Registrar Gasto</Button>
+        <Button onClick={() => setIsDialogOpen(true)} className="rounded-xl shadow-lg hover:shadow-[0_10px_15px_muted]">Registrar Gasto</Button>
       </div>
 
       <div className="p-4">
