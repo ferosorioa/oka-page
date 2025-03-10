@@ -291,7 +291,7 @@ export default function B2CClientCheckout({ cartItems, total, onComplete }: { ca
                   ))}
               </ScrollArea>
 
-              <Button onClick={() => setCreatingClient(true)} variant="outline" className="w-full mt-4">
+              <Button onClick={() => setCreatingClient(true)} variant="outline" className="w-full mt-4" >
                 <UserPlus className="mr-2" /> Agregar Nuevo Cliente
               </Button>
             </>

@@ -64,7 +64,7 @@ export default function Proveedores() {
     <div className="">
       <div className="flex justify-between items-center mb-4 bg-muted p-4 rounded-lg shadow-lg">
         <h1 className="text-2xl font-bold text-white">Proveedores</h1>
-        <Button onClick={() => setIsDialogOpen(true)}>Agregar Proveedor</Button>
+        <Button onClick={() => setIsDialogOpen(true)} className="rounded-xl shadow-lg hover:shadow-[0_10px_15px_muted]">Agregar Proveedor</Button>
       </div>
       <div className="p-4">
       <table
