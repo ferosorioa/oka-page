@@ -15,12 +15,12 @@ type TopProductsTableProps = {
 export default function TopProductsTable({ products }: TopProductsTableProps) {
   return (
     <div style={{ marginTop: '2rem' }}>
-      <h3 className='font-bold text-lg text-primary'>Top Selling Products</h3>
+      <h3 className='font-bold text-lg text-primary'>Productos más vendidos</h3>
       <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
         <thead>
           <tr style={{ borderBottom: '2px solid #ccc' }}>
-            <th  className="px-4 py-2 bg-primary text-white" style={cellStyle}>Product</th>
-            <th  className="px-4 py-2 bg-primary text-white" style={cellStyle}>Total Sold</th>
+            <th  className="px-4 py-2 bg-primary text-white" style={cellStyle}>Producto</th>
+            <th  className="px-4 py-2 bg-primary text-white" style={cellStyle}>Total vendido</th>
           </tr>
         </thead>
         <tbody>

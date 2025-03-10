@@ -45,14 +45,18 @@ const executeSqlTool = new DynamicStructuredTool({
         throw new Error("Only SELECT queries are allowed");
       }
       
+      console.log("Executing SQL query:", query);
       const result = await supabase.rpc('execute_sql_query', { query });
       
       if (result.error) {
-        throw new Error(result.error.message);
+        console.error("Supabase RPC error:", result.error);
+        throw new Error(`Supabase error: ${result.error.message}`);
       }
       
+      console.log("Query result:", result.data);
       return JSON.stringify(result.data);
     } catch (error) {
+      console.error("Error in executeSqlTool:", error);
       return `Error executing query: ${error instanceof Error ? error.message : String(error)}`;
     }
   },
@@ -67,21 +71,40 @@ export async function createDbAgent(userMessage: string) {
   // Create a model and give it access to the tools
   const model = new ChatOpenAI({
     model: "gpt-4o",
-    temperature: 0,
+    temperature: 0.5,
   }).bindTools(tools);
 
   // Define the system message with the DB schema
-  const systemMessage = `You are a database expert who helps users query and analyze data.
-  You have access to a database with the following schema:
-  
-  ${DB_SCHEMA}
-  
-  1. When asked a question, think about what SQL query would answer it
-  2. Use the execute_sql_query tool to run the query
-  3. Analyze the results and provide insights
-  4. Be concise but thorough in your analysis
-  
-  Always verify your queries are valid and only use tables and columns that exist in the schema.`;
+  const systemMessage = `Eres un amigable y entusiasta asistente de ventas y analista de datos para OKA México, una empresa que vende hermosos productos hechos de piel de nopal y fibras naturales.
+Nuestra página web es https://okamexico.com/
+
+Tienes acceso a una base de datos con el siguiente esquema:
+
+${DB_SCHEMA}
+
+Cuando interactúes con clientes o analices datos:
+1. Sé cordial y personal, usa un tono conversacional y amistoso
+2. Piensa qué consulta SQL respondería mejor a la pregunta
+3. Ejecuta la consulta usando la herramienta execute_sql_query
+4. Analiza los resultados de forma detallada y proporciona insights valiosos
+5. Ofrece sugerencias proactivas basadas en los datos (tendencias, oportunidades, etc.)
+6. Recomienda productos cuando sea apropiado
+
+Información sobre OKA México:
+- Somos una empresa que revoluciona la industria de la moda con productos sustentables
+- Creamos accesorios con diseños exclusivos de piel de nopal y fibras naturales
+- Ofrecemos bolsas, carteras, mochilas y otros accesorios
+- Nuestro lema es "El futuro del arte y diseño no es sólo Mexicano, también es verde"
+- Ofrecemos envíos GRATIS en pedidos mayores a $2,500 MXN
+
+Cuando analices datos de ventas o inventario, siempre:
+- Destaca patrones interesantes o tendencias emergentes
+- Sugiere estrategias para aumentar ventas o mejorar rotación de inventario
+- Identifica productos estrella y oportunidades de crecimiento
+- Propón ideas para campañas de marketing basadas en los datos
+- Conecta los datos con la misión sostenible de la empresa
+
+Verifica siempre que tus consultas SQL sean válidas y solo uses tablas y columnas que existan en el esquema.`;
 
   // Define the function that determines whether to continue or not
   function shouldContinue({ messages }: typeof MessagesAnnotation.State) {
@@ -97,12 +120,23 @@ export async function createDbAgent(userMessage: string) {
 
   // Define the function that calls the model
   async function callModel(state: typeof MessagesAnnotation.State) {
-    const response = await model.invoke([
-      { role: "system", content: systemMessage },
-      ...state.messages
-    ]);
-
-    return { messages: [response] };
+    try {
+      const response = await model.invoke([
+        { role: "system", content: systemMessage },
+        ...state.messages
+      ]);
+      return { messages: [response] };
+    } catch (error) {
+      console.error("Error in model invocation:", error);
+      // Return a fallback message
+      return { 
+        messages: [
+          new AIMessage({ 
+            content: `I encountered an error processing your request: ${error instanceof Error ? error.message : String(error)}. Please try a simpler query.` 
+          })
+        ] 
+      };
+    }
   }
 
   // Define a new graph
@@ -119,6 +153,15 @@ export async function createDbAgent(userMessage: string) {
   // Use the agent
   const response = await app.invoke({
     messages: [new HumanMessage(userMessage)],
+  }).catch(error => {
+    console.error("Agent execution error:", error);
+    return {
+      messages: [
+        new AIMessage({
+          content: `I encountered an error: ${error instanceof Error ? error.message : String(error)}. Please try again with a different query.`
+        })
+      ]
+    };
   });
 
   return response;

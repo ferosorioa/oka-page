@@ -104,7 +104,7 @@ export default function ChatAssistant() {
           <div className="bg-primary p-3 text-white flex justify-between items-center rounded-t-lg">
             <h3 className="font-medium flex items-center">
               <MessageSquare className="mr-2 h-5 w-5" />
-              DB Assistant
+              Asistente de datos y ventas
             </h3>
             <Button 
               variant="ghost" 
@@ -123,8 +123,8 @@ export default function ChatAssistant() {
             >
               {messages.length === 0 ? (
                 <div className="text-center text-gray-500 mt-4">
-                  <p>Ask me anything about your data!</p>
-                  <p className="text-xs mt-1">Example: "Show me monthly sales trends"</p>
+                  <p>¡Pide lo que necesites sobre tus datos!</p>
+                  <p className="text-xs mt-1">Ejemplo: "Muestra las ventas mensuales"</p>
                 </div>
               ) : (
                 messages.map((message) => (
@@ -165,7 +165,7 @@ export default function ChatAssistant() {
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask about your data..."
+                placeholder="Pide sobre tus datos..."
                 className="flex-1"
                 disabled={isLoading}
               />

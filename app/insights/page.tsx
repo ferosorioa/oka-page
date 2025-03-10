@@ -136,7 +136,7 @@ export default async function InsightsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
             {/* Monthly Sales Chart */}
             <div className="">
-              <h2 className="text-3xl font-bold text-accent mb-2">Monthly Sales</h2>
+              <h2 className="text-3xl font-bold text-accent mb-2">Ventas mensuales</h2>
               <div className="p-4 rounded-lg border  h-[400px] md:h-[450px] overflow-hidden">
                 <div className="w-full h-full flex items-center justify-center">
                   <MonthlySalesChart data={monthlySalesData} />
@@ -146,7 +146,7 @@ export default async function InsightsPage() {
 
             {/* Ingresos Pie Chart */}
             <div>
-              <h2 className="text-3xl font-bold text-accent mb-2">Ingresos Breakdown</h2>
+              <h2 className="text-3xl font-bold text-accent mb-2">Desglose de ingresos</h2>
               <div className="p-4 rounded-lg border h-[400px] md:h-[450px] overflow-hidden">
                 <div className="w-full h-full flex items-center justify-center">
                   <IngresosPieChart data={ingresosPieData} />
@@ -157,7 +157,7 @@ export default async function InsightsPage() {
 
           {/* Top Products Table Section - Below Charts */}
           <div>
-            <h2 className="text-3xl font-bold text-accent mb-2">Top Products</h2>
+            <h2 className="text-3xl font-bold text-accent mb-2">Productos más vendidos</h2>
             <div className="p-4 rounded-lg border ">
               <TopProductsTable products={topProducts} />
             </div>

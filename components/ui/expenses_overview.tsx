@@ -31,14 +31,14 @@ const ExpenseOverview: React.FC = () => {
     fetchExpenses();
   }, []);
 
-  if (loading) return <div>Loading Expense Overview...</div>;
-  if (!data) return <div>No Expense Data</div>;
+  if (loading) return <div>Cargando resumen de gastos...</div>;
+  if (!data) return <div>No hay datos de gastos</div>;
 
   return (
     <div>
-      <h2>Expense Overview (B2B)</h2>
-      <p>Total Expenses: ${data.totalExpense.toFixed(2)}</p>
-      <p>Number of Expenses: {data.count}</p>
+      <h2>Resumen de gastos (B2B)</h2>
+      <p>Gastos totales: ${data.totalExpense.toFixed(2)}</p>
+      <p>Número de gastos: {data.count}</p>
     </div>
   );
 };

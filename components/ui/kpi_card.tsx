@@ -18,7 +18,7 @@ export default function KpiCards({
     <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
       <div style={cardStyle} className="group hover:bg-muted">
         <h3 className="text-primary font-bold group-hover:text-white">
-          Total Sales
+          Ventas totales
         </h3>
         <p style={valueStyle} className="group-hover:text-white">
           ${formatAbbreviatedNumber(totalSales)}
@@ -26,7 +26,7 @@ export default function KpiCards({
       </div>
       <div style={cardStyle} className="group hover:bg-muted">
         <h3 className="text-primary font-bold group-hover:text-white">
-          Total Expenses
+          Gastos totales
         </h3>
         <p style={valueStyle} className="group-hover:text-white">
           ${formatAbbreviatedNumber(totalExpenses)}
@@ -34,7 +34,7 @@ export default function KpiCards({
       </div>
       <div style={cardStyle} className="group hover:bg-muted">
         <h3 className="text-primary font-bold group-hover:text-white">
-          Total Ingresos
+          Ingresos totales
         </h3>
         <p style={valueStyle} className="group-hover:text-white">
           ${formatAbbreviatedNumber(totalIngresos)}

@@ -33,7 +33,7 @@ function formatAbbreviatedNumber(value: number): string {
 export default function MonthlySalesChart({ data }: MonthlySalesChartProps) {
   return (
     <div style={{ width: '500px', height: '400px' }} className="p-4">
-      <h3 className="text-lg font-bold">Monthly Sales</h3>
+      <h3 className="text-lg font-bold">Ventas mensuales</h3>
       <ResponsiveContainer>
         <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
